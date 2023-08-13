@@ -1,6 +1,8 @@
 import React from "react";
+import { useState } from "react";
 import { tagType, thirdweb } from "../assets";
 import { daysLeft } from "../utils";
+import { useStateContext } from "../context";
 
 const Fundcard = ({
   owner,
@@ -11,12 +13,19 @@ const Fundcard = ({
   amountCollected,
   image,
   handleClick,
+  category,
 }) => {
   const remainingDays = daysLeft(deadline);
+  const { dark,avatar,convert } = useStateContext();
+  const [price, setPrice] = useState(0);
+
+  const data = async () => {
+    setPrice(await convert(target));
+  };
 
   return (
     <div
-      className="sm:w-[288px] w-full rounded-[15px] bg-[#1c1c24] cursor-pointer shadow-lg shadow-indigo-500/50"
+      className={`sm:w-[288px] w-full rounded-[15px] ${dark ?  'bg-[#1c1c24]' : 'bg-[#f3f6f6f7]'} cursor-pointer shadow-lg shadow-indigo-500/50`}
       onClick={handleClick}
     >
       <img
@@ -33,12 +42,12 @@ const Fundcard = ({
             className="w-[17px] h-[17px] object-contain shadow-lg shadow-blue-500/50"
           />
           <p className="ml-[12px] mt-[2px] font-epilogue font-medium text-[12px] text-[#808191]">
-            Education
+            {category}
           </p>
         </div>
 
         <div className="block">
-          <h3 className="font-epilogue font-semibold text-[16px] text-white text-left leading-[26px] truncate">
+          <h3 className={`font-epilogue font-semibold text-[16px] ${ dark ? 'text-white' : 'text-black'} text-left leading-[26px] truncate`}>
             {title}
           </h3>
           <p className="mt-[5px] font-epilogue font-normal text-[#808191] text-left leading-[18px] truncate">
@@ -52,7 +61,7 @@ const Fundcard = ({
               {amountCollected}
             </h4>
             <p className="mt-[3px] font-epilogue font-normal text-[12px] leading-[18px] text-[#808191] sm:max-w-[120px] truncate">
-              Raised of {target}
+              Raised of {target} ETH / {price} USD
             </p>
           </div>
           <div className="flex flex-col">
@@ -68,7 +77,7 @@ const Fundcard = ({
         <div className="flex items-center mt-[20px] gap-[12px]">
           <div className="w-[30px] h-[30px] rounded-full flex justify-center items-center bg-[#13131a]">
             <img
-              src={thirdweb}
+              src={avatar}
               alt="user"
               className="w-1/2 h-1/2 object-contain"
             />

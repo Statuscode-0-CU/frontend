@@ -2,9 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { loader } from "../assets";
 import { PayCard } from "../components";
+import { useStateContext } from "../context";
 
 const PaymentCampaigns = ({ title, isLoading, campaigns }) => {
   const navigate = useNavigate();
+  const { dark } = useStateContext();
 
   const handleNavigate = (campaign) => {
     navigate(`/campaign-details/${campaign.title}`, { state: campaign });
@@ -13,7 +15,7 @@ const PaymentCampaigns = ({ title, isLoading, campaigns }) => {
   console.log(campaigns.length);
   return (
     <div>
-      <h1 className="font-epilogue font-semibold text-[18px] text-white text-left">
+      <h1 className={`font-epilogue font-semibold text-[18px] ${ dark ? "text-white" : "text-black"} text-left`}>
         {title} ({campaigns.length})
       </h1>
 

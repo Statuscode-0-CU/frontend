@@ -9,6 +9,8 @@
     "deploy": "yarn build && npx thirdweb@latest upload dist"
   },
   "dependencies": {
+    "@dicebear/collection": "^6.0.4",
+    "@dicebear/core": "^6.0.4",
     "@thirdweb-dev/chains": "^0.1.6",
     "@thirdweb-dev/react": "^3",
     "@thirdweb-dev/sdk": "^3",

@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 import { useContext, createContext } from "react";
 import {
   useAddress,
@@ -7,28 +8,57 @@ import {
   useContractWrite,
 } from "@thirdweb-dev/react";
 import { ethers } from "ethers";
+import { useMemo } from "react";
+import { createAvatar } from "@dicebear/core";
+import { identicon, lorelei } from "@dicebear/collection";
 
 const StateContext = createContext();
 
 export const StateContextProvider = ({ children }) => {
+  const [dark, setDark] = useState(false);
+  const [currentOption, setCurrentOption] = useState("All");
   const { contract } = useContract(
-    "0x71eB638C040FaCFeafa3f5aC5C7A4172729e49DB"
+    "0x5485923Fb45Cb374D4715140942f807794B1443a"
+  );
+  const ethtoUsdConvertor = useContract(
+    "0x86dA2866a7Ad9257d04D398109783F7654348954"
   );
   const { mutateAsync: createCampaign } = useContractWrite(
     contract,
     "createCampaign"
   );
+  const { mutateAsync: getConversionRate } = useContractWrite(
+    ethtoUsdConvertor.contract,
+    "getConversionRate"
+  );
   const address = useAddress();
   const connect = useMetamask();
+  const avatar = useMemo(() => {
+    return createAvatar(identicon, {
+      size: 128,
+    }).toDataUriSync();
+  }, [address]);
+  const convert = async (value) => {
+    try {
+      const data = await getConversionRate({ args: [value*1e9] });
+      const decimalValue = parseInt(data._hex, 16);
+      return decimalValue;
+    } catch (err) {
+      console.error("contract call failure", err);
+    }
+  };
+
   const publishCampaign = async (form) => {
     try {
       const data = await createCampaign([
         address,
+        convert,
         form.title,
         form.description,
         form.target,
         new Date(form.deadline).getTime(),
         form.image,
+        form.category
       ]);
       console.log("Contract call success", data);
     } catch (error) {
@@ -49,6 +79,7 @@ export const StateContextProvider = ({ children }) => {
       ),
       image: campaign.image,
       donaters: campaign.donaters,
+      category: campaign.category,
       pId: id,
     }));
     return parsedCampaigns;
@@ -64,11 +95,11 @@ export const StateContextProvider = ({ children }) => {
 
   const getPaymentCampaigns = async () => {
     const allCampaigns = await getCampaigns();
-    const filteredCampaigns = allCampaigns.filter(
-      (campaign) => campaign.donaters.includes(address)
+    const filteredCampaigns = allCampaigns.filter((campaign) =>
+      campaign.donaters.includes(address)
     );
     return filteredCampaigns;
-  }
+  };
 
   const donate = async (pId, amount) => {
     const data = await contract.call("donateToCampaigns", pId, {
@@ -96,10 +127,15 @@ export const StateContextProvider = ({ children }) => {
         address,
         contract,
         connect,
+        dark,
+        setDark,
         createCampaign: publishCampaign,
         getCampaigns,
         getUserCampaigns,
         getPaymentCampaigns,
+        currentOption,
+        setCurrentOption,
+        avatar,
         donate,
         getDonation,
       }}

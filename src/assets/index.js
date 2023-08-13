@@ -12,6 +12,8 @@ import menu from './menu.svg';
 import money from './money.svg';
 import loader from './loader.svg';
 import thirdweb from './thirdweb.png';
+import moon from './moon.svg';
+import downarrow from './downarrow.svg';
 
 export {
   tagType,
@@ -24,6 +26,8 @@ export {
   sun,
   withdraw,
   search,
+  downarrow,
+  moon,
   menu,
   money,
   loader,

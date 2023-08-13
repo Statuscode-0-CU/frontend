@@ -3,19 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { loader } from "../assets";
 import { Fundcard } from "../components";
 import { daysLeft } from "../utils";
+import { useStateContext } from "../context";
 
 const DisplayCampaigns = ({ title, isLoading, campaigns }) => {
   const navigate = useNavigate();
+  const { dark,currentOption } = useStateContext();
 
   const handleNavigate = (campaign) => {
     navigate(`/campaign-details/${campaign.title}`, { state: campaign });
   };
 
-  console.log(campaigns.length);
 
   return (
     <div>
-      <h1 className="font-epilogue font-semibold text-[18px] text-white text-left">
+      <h1 className={`font-epilogue font-semibold text-[18px] ${dark ? "text-white" : "text-black"} text-left`}>
         {title} ({campaigns.filter((campaign) => daysLeft(campaign.deadline) > 0).length})
       </h1>
 
@@ -34,11 +35,23 @@ const DisplayCampaigns = ({ title, isLoading, campaigns }) => {
           </p>
         )}
 
-        {!isLoading &&
+        {currentOption==="All" &&  !isLoading &&
           campaigns.length > 0 &&
           campaigns.map(
             (campaign) =>
               daysLeft(campaign.deadline) > 0 && (
+                <Fundcard
+                  key={campaign.id}
+                  {...campaign}
+                  handleClick={() => handleNavigate(campaign)}
+                />
+              )
+          )}
+        {!isLoading &&
+          campaigns.length > 0 &&
+          campaigns.map(
+            (campaign) =>
+              daysLeft(campaign.deadline) > 0 && currentOption === (campaign.category) && (
                 <Fundcard
                   key={campaign.id}
                   {...campaign}

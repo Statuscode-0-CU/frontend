@@ -1,6 +1,7 @@
 import React from "react";
 import { tagType, thirdweb } from "../assets";
 import { daysLeft } from "../utils";
+import { useStateContext } from "../context";
 
 const PayCard = ({
   owner,
@@ -13,10 +14,11 @@ const PayCard = ({
   handleClick,
 }) => {
   const remainingDays = daysLeft(deadline);
+  const { dark } = useStateContext();
 
   return (
     <div
-      className="w-full flex flex-row items-center relative rounded-[15px] bg-[#1c1c24] cursor-pointer shadow-lg shadow-indigo-500/50"
+      className={`w-full flex flex-row items-center relative rounded-[15px] ${dark ?  'bg-[#1c1c24]' : 'bg-[#f3f6f6f7]'} cursor-pointer shadow-lg shadow-indigo-500/50`}
       onClick={handleClick}
     >
       <img
@@ -38,7 +40,7 @@ const PayCard = ({
         </div>
 
         <div className="block">
-          <h3 className="font-epilogue font-semibold text-[16px] text-white text-left leading-[26px] truncate">
+          <h3 className={`font-epilogue font-semibold text-[16px] ${ dark ? 'text-white' : 'text-black'} text-left leading-[26px] truncate`}>
             {title}
           </h3>
           <p className="mt-[5px] font-epilogue font-normal text-[#808191] text-left leading-[18px] truncate">
