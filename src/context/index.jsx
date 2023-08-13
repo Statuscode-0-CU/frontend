@@ -52,7 +52,6 @@ export const StateContextProvider = ({ children }) => {
     try {
       const data = await createCampaign([
         address,
-        convert,
         form.title,
         form.description,
         form.target,
@@ -129,6 +128,7 @@ export const StateContextProvider = ({ children }) => {
         connect,
         dark,
         setDark,
+        convert,
         createCampaign: publishCampaign,
         getCampaigns,
         getUserCampaigns,
